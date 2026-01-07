@@ -2,10 +2,16 @@
 
 import os
 import pandas as pd
-import yfinance as yf
 from typing import List, Optional
 from datetime import datetime
 import pickle
+
+try:
+    import yfinance as yf
+    YFINANCE_AVAILABLE = True
+except ImportError:
+    YFINANCE_AVAILABLE = False
+    yf = None
 
 
 class HistoricalDataLoader:
@@ -78,6 +84,11 @@ class HistoricalDataLoader:
                     continue
 
             # Download from yfinance
+            if not YFINANCE_AVAILABLE:
+                raise ImportError(
+                    "yfinance is not installed. Please install it with: pip install yfinance"
+                )
+
             print(f"Downloading {ticker} from {start_date} to {end_date}...")
             try:
                 ticker_obj = yf.Ticker(ticker)
